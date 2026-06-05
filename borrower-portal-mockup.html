@@ -246,6 +246,99 @@
   }
   .filter-count.red { background: var(--red); color: white; }
 
+  /* === Loan picker — "Viewing: Loan #X of N" dropdown === */
+  .loan-pick {
+    position: relative;
+    max-width: 1040px;
+    margin: 0 auto 24px;
+  }
+  /* Override the big top margin on loan-card when it lives inside loan-block (under the picker) */
+  .loan-block > .loan-card { margin-top: 0; }
+  .loan-pick-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: none;
+    padding: 6px 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--navy);
+    cursor: pointer;
+  }
+  .loan-pick-btn:hover { color: var(--orange); }
+  .loan-pick-btn:hover svg { color: var(--orange); }
+  .loan-pick-btn svg { color: var(--muted); flex-shrink: 0; transition: transform .15s; }
+  .lp-prefix { color: var(--muted); font-weight: 600; }
+
+  .loan-pick-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    background: white;
+    border-radius: 14px;
+    box-shadow: 0 14px 36px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.06);
+    min-width: 360px;
+    padding: 6px;
+    display: none;
+    z-index: 80;
+  }
+  .loan-pick-menu.open { display: block; }
+  .lp-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 14px 16px;
+    background: none;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: background .12s;
+  }
+  .lp-item + .lp-item { border-top: 1px solid var(--border-soft); border-radius: 0 0 10px 10px; }
+  .lp-item:hover { background: #F7F8FA; }
+  .lp-item-body { flex: 1; min-width: 0; }
+  .lp-item-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--navy);
+    margin: 0 0 4px;
+  }
+  .lp-item-addr {
+    font-size: 13px;
+    color: var(--muted);
+    margin: 0;
+  }
+  /* Status pill on the right */
+  .lp-status {
+    flex-shrink: 0;
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  /* Status pills reflect each loan's status (independent of selection) */
+  .lp-status.incomplete-pill {
+    background: #FFE5D6;
+    color: #C8430A;
+  }
+  .lp-status.pending-pill {
+    background: #DBEAFE;
+    color: #1E40AF;
+  }
+  .lp-status.funded-pill {
+    background: #DCFCE7;
+    color: #15803D;
+  }
+  /* Selected dropdown item — light orange background tint */
+  .lp-item.selected {
+    background: var(--orange-soft);
+  }
+  .lp-item.selected:hover { background: var(--orange-soft); }
+
   /* Loan switcher pills (one loan visible at a time) */
   .loan-switcher {
     max-width: 1040px;
@@ -257,39 +350,40 @@
   .ls-pill {
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     background: white;
-    border: 1px solid var(--border);
+    border: 1.5px solid var(--border);
     border-radius: 999px;
-    padding: 8px 16px;
-    font-size: 13px;
+    padding: 8px 14px 8px 18px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--navy);
     cursor: pointer;
-    transition: border-color .15s, background .15s, color .15s;
+    transition: border-color .15s, background .15s;
   }
-  .ls-pill svg { color: var(--muted); }
-  .ls-pill:hover { border-color: var(--orange); color: var(--orange); }
-  .ls-pill:hover svg { color: var(--orange); }
+  .ls-pill:hover { border-color: #9CA3AF; }
   .ls-pill.active {
-    background: var(--orange);
-    border-color: var(--orange);
-    color: white;
-  }
-  .ls-pill.active svg { color: white; }
-  .ls-purpose {
     background: var(--orange-soft);
-    color: var(--orange-dark);
-    padding: 2px 10px;
+    border-color: var(--orange);
+    color: var(--navy);
+  }
+  /* Status badge inside pill */
+  .ls-status {
+    padding: 3px 10px;
     border-radius: 999px;
     font-size: 11px;
     font-weight: 800;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.3px;
+  }
+  .ls-status.incomplete {
+    background: #FFE5D6;
+    color: #C8430A;
     text-transform: uppercase;
   }
-  .ls-pill.active .ls-purpose {
-    background: rgba(255,255,255,0.22);
-    color: white;
+  .ls-status.pending {
+    background: #DBEAFE;
+    color: #1E40AF;
+    white-space: nowrap;
   }
 
   /* Address + Rate Alert chip on same row */
@@ -398,21 +492,21 @@
   /* Inactive cards: muted style, no chips, no button — entire card clickable */
   .loan-card.inactive {
     cursor: pointer;
-    background: #FAF7EF;
-    border-color: #E9E1CC;
+    background: #F9FAFB;
+    border-color: #E5E7EB;
     transition: border-color .15s, transform .12s;
   }
   .loan-card.inactive:hover {
-    border-color: var(--orange);
+    border-color: #9CA3AF;
     transform: translateY(-1px);
   }
   .loan-card.inactive .loan-card-header {
-    background: #F2EEDF;
+    background: #F3F4F6;
   }
-  .loan-card.inactive .loan-card-title { color: var(--muted); }
-  .loan-card.inactive .loan-card-time { color: var(--muted); }
-  .loan-card.inactive .loan-card-address { color: var(--muted); padding-bottom: 16px; }
-  .loan-card.inactive .loan-card-address svg { color: #B5AC97; }
+  .loan-card.inactive .loan-card-title { color: #6B7280; }
+  .loan-card.inactive .loan-card-time { color: #9CA3AF; }
+  .loan-card.inactive .loan-card-address { color: #6B7280; padding-bottom: 16px; }
+  .loan-card.inactive .loan-card-address svg { color: #9CA3AF; }
   .loan-card.inactive .loan-card-body { padding-top: 18px; padding-bottom: 8px; }
 
   /* Status badges for inactive loans */
@@ -527,6 +621,63 @@
     text-align: center;
   }
   .lc-count.green { background: var(--green); }
+
+  /* Address used AS the card title in the header bar */
+  .loan-card-address-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    flex: 1;
+    min-width: 0;
+  }
+  .loan-card-address-title svg { color: var(--muted); flex-shrink: 0; }
+
+  /* Timestamp aligned to the bottom-right of the loan card body */
+  .lc-time-bottom {
+    margin: 14px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: right;
+    font-weight: 500;
+  }
+
+  /* Application progress bar inside loan card */
+  .lc-progress {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-soft);
+  }
+  .lc-progress-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .lc-progress-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy);
+  }
+  .lc-progress-pct {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--orange);
+  }
+  .lc-progress-track {
+    height: 8px;
+    background: #E8F5EC;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .lc-progress-fill {
+    height: 100%;
+    background: var(--green);
+    border-radius: 999px;
+    transition: width .3s ease;
+  }
 
   .loan-card-divider {
     height: 1px;
@@ -736,7 +887,8 @@
     border-radius: 999px;
     font-size: 12px;
     font-weight: 700;
-    letter-spacing: 0.4px;
+    letter-spacing: 0;
+    white-space: nowrap;
   }
 
   /* Empty state when no inactive loans */
@@ -748,6 +900,16 @@
     max-width: 1040px;
     margin: 0 auto;
   }
+
+  /* Inactive loan view — single-column centered layout */
+  .inactive-wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 28px 60px 60px;
+  }
+  .inactive-wrap .right-col-title { margin-bottom: 18px; }
+  .inactive-wrap .form-card { margin-bottom: 18px; }
+  .inactive-lo { max-width: none; }
 
   /* === Closed-loan view styles === */
   /* No hover/click affordance — Loan status is display-only */
@@ -1372,8 +1534,8 @@
   .form-field input,
   .form-field select {
     width: 100%;
-    background: #FAFAF7;
-    border: 1px solid #ECE7D9;
+    background: white;
+    border: 1px solid #ADB5BD;
     border-radius: 10px;
     padding: 14px 16px;
     font-size: 15px;
@@ -1400,8 +1562,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    background: #FAFAF7;
-    border: 1px solid #ECE7D9;
+    background: white;
+    border: 1px solid #ADB5BD;
     border-radius: 10px;
     padding: 0 16px;
   }
@@ -1563,6 +1725,38 @@
   .ra-modal-actions { display:flex; gap:10px; margin-top:18px; }
   .lo-btn { flex:1; border:1px solid var(--border); background:white; color:var(--text); border-radius:999px; padding:9px 0; font-size:13px; font-weight:700; cursor:pointer; }
   .lo-btn.primary { background:var(--orange); color:white; border-color:var(--orange); }
+
+  /* === Info banner inside modal (Disclosures error state) === */
+  .info-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px 18px;
+    border-radius: 10px;
+  }
+  .info-banner.red {
+    background: #FEE2E2;
+    color: #B91C1C;
+  }
+  .info-banner.green {
+    background: #DCFCE7;
+    color: #15803D;
+  }
+  .info-banner.green .info-banner-icon { color: #15803D; }
+  .info-banner.green .info-banner-title { color: #15803D; }
+  .info-banner-icon { flex-shrink: 0; padding-top: 1px; }
+  .info-banner-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #DC2626;
+    margin: 0 0 4px;
+  }
+  .info-banner-text {
+    font-size: 14px;
+    color: var(--navy);
+    margin: 0;
+    line-height: 1.5;
+  }
 </style>
 </head>
 <body>
@@ -1571,7 +1765,7 @@
 <header class="header">
   <div class="logo">LOAN FACT<span class="o">O</span>RY<sup>®</sup></div>
   <nav class="nav">
-    <a href="#" id="navHome" class="active" onclick="goPage('homePage'); return false;">My Loans</a>
+    <a href="#" id="navHome" onclick="goPage('homePage'); return false;">My Loans</a>
     <a href="#" id="navIQ">LoanFactory IQ</a>
   </nav>
   <div class="header-right">
@@ -1611,7 +1805,7 @@
 </header>
 
 <!-- ============ MY LOANS PAGE ============ -->
-<main class="page active" id="homePage">
+<main class="page" id="homePage">
   <div class="home-bg">
     <div class="container">
 
@@ -1631,7 +1825,7 @@
             </button>
             <button class="lf-option" data-filter="inactive" onclick="setLoanFilter('inactive')">
               <span class="lf-check"></span>
-              Inactive loan (0)
+              Inactive loan (1)
             </button>
           </div>
         </div>
@@ -1640,18 +1834,29 @@
       <!-- ACTIVE LOANS -->
       <div class="loan-list" id="activeList">
 
-        <!-- Loan switcher pills (pill 1: editable application; pill 2: view-only converted loan) -->
-        <div class="loan-switcher" id="loanSwitcher">
-          <button class="ls-pill active" data-loan="loan1" onclick="selectLoan('loan1')">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            175 13th Street, DC
-            <span class="ls-purpose">Refinance</span>
+        <!-- Loan picker dropdown — "Viewing: Loan #X of N ▾" -->
+        <div class="loan-pick" id="loanPickWrap">
+          <button class="loan-pick-btn" id="loanPickBtn" onclick="toggleLoanPick(event)">
+            <span class="lp-prefix">Viewing:</span>
+            <span id="loanPickLabel">Loan #1 of 2</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
-          <button class="ls-pill" data-loan="loan2" onclick="selectLoan('loan2')">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-            563 Carolyn Weston, CA
-            <span class="ls-purpose">Purchase</span>
-          </button>
+          <div class="loan-pick-menu" id="loanPickMenu">
+            <button class="lp-item selected" data-loan="loan1" onclick="pickLoan('loan1')">
+              <div class="lp-item-body">
+                <p class="lp-item-title">Refinance · Lower Rate/Payments</p>
+                <p class="lp-item-addr">175 13th Street Washington, DC</p>
+              </div>
+              <span class="lp-status incomplete-pill">Incomplete</span>
+            </button>
+            <button class="lp-item" data-loan="loan2" onclick="pickLoan('loan2')">
+              <div class="lp-item-body">
+                <p class="lp-item-title">Purchase · Primary Residence</p>
+                <p class="lp-item-addr">563 Carolyn Weston Blvd, San Jose, CA</p>
+              </div>
+              <span class="lp-status pending-pill">Pending lender's approval</span>
+            </button>
+          </div>
         </div>
 
         <!-- === Loan #1 === -->
@@ -1676,6 +1881,17 @@
                   Rate Alert
                   <span class="lc-count green">Hit</span>
                 </button>
+              </div>
+
+              <!-- Application progress bar -->
+              <div class="lc-progress">
+                <div class="lc-progress-head">
+                  <span class="lc-progress-label">Application progress</span>
+                  <span class="lc-progress-pct">8%</span>
+                </div>
+                <div class="lc-progress-track">
+                  <div class="lc-progress-fill" style="width:8%;"></div>
+                </div>
               </div>
             </div>
           </div>
@@ -1727,7 +1943,7 @@
                 <span class="loan-card-title">Purchase - Primary Residence</span>
                 <span class="loan-card-time">· Active since 12 Mar 2024</span>
               </div>
-              <span class="badge-in-process">IN PROCESS</span>
+              <span class="badge-in-process">Pending lender's approval</span>
             </div>
             <div class="loan-card-body">
               <div class="loan-card-addr-row">
@@ -1738,13 +1954,66 @@
               </div>
             </div>
           </div>
+
+          <!-- Needed documents for Loan #2 -->
+          <div class="needed-card">
+            <div class="needed-head">
+              <h3 class="needed-title">Needed documents</h3>
+            </div>
+            <div class="needed-list">
+              <div class="needed-row">
+                <div class="needed-info">
+                  <p class="needed-name">John Homeowner: Signed purchase contract</p>
+                  <p class="needed-meta">Requested by Sarah · 2 days ago</p>
+                </div>
+                <button class="needed-upload">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Upload
+                </button>
+              </div>
+              <div class="needed-row">
+                <div class="needed-info">
+                  <p class="needed-name">John Homeowner: Proof of earnest money deposit</p>
+                  <p class="needed-meta">Requested by Sarah · 2 days ago</p>
+                </div>
+                <button class="needed-upload">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Upload
+                </button>
+              </div>
+              <div class="needed-row">
+                <div class="needed-info">
+                  <p class="needed-name">John Homeowner: Homeowners insurance binder</p>
+                  <p class="needed-meta">Requested by Sarah · 1 day ago</p>
+                </div>
+                <button class="needed-upload">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  Upload
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
 
       </div>
 
       <!-- INACTIVE LOANS (none currently) -->
       <div class="loan-list" id="inactiveList" style="display:none;">
-        <p class="empty-inactive">No inactive loans.</p>
+        <div class="loan-card inactive" onclick="goPage('appPageInactive')">
+          <div class="loan-card-header">
+            <div>
+              <span class="loan-card-title">Refinance - Rate Reduction</span>
+              <span class="loan-card-time">· Withdrawn 18 Jun 2024</span>
+            </div>
+            <span class="badge-withdrawn">WITHDRAWN</span>
+          </div>
+          <div class="loan-card-body">
+            <div class="loan-card-address">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              22 Harbor View Rd, Seattle, WA 98101
+            </div>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -1841,7 +2110,7 @@
 
 
 <!-- ============ LOAN DETAILS V1 ============ -->
-<main class="page" id="appPage">
+<main class="page active" id="appPage">
   <div class="details-bg">
 
     <div class="details-wrap">
@@ -1974,13 +2243,13 @@
               <p class="tile-value">Target 5.625% · -$752</p>
             </div>
           </div>
-          <div class="v2-tile clickable" onclick="openModal('todoModal')">
+          <div class="v2-tile clickable" onclick="openModal('disclosuresModal')">
             <div class="tile-icon red">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             </div>
             <div>
-              <p class="tile-label">Outstanding to-dos</p>
-              <p class="tile-value">3 items waiting</p>
+              <p class="tile-label">Disclosures</p>
+              <p class="tile-value">View and sign</p>
             </div>
           </div>
         </div>
@@ -2187,7 +2456,7 @@
           <ul class="events-list">
             <li class="event-row done">
               <span class="event-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
-              <a href="#" class="event-link">Rate locked</a>
+              <a href="#" class="event-link" onclick="event.preventDefault(); openModal('rateLockedModal');">Rate locked</a>
             </li>
             <li class="event-row done">
               <span class="event-ic"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
@@ -2247,13 +2516,13 @@
               <p class="tile-value">Target 5.625% · -$752</p>
             </div>
           </div>
-          <div class="v2-tile clickable" onclick="openModal('todoModal')">
+          <div class="v2-tile clickable" onclick="openModal('disclosuresModal')">
             <div class="tile-icon red">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
             </div>
             <div>
-              <p class="tile-label">Outstanding to-dos</p>
-              <p class="tile-value">3 items waiting</p>
+              <p class="tile-label">Disclosures</p>
+              <p class="tile-value">View and sign</p>
             </div>
           </div>
         </div>
@@ -2292,6 +2561,71 @@
           <span class="chat-dot">3</span>
         </div>
       </section>
+    </div>
+  </div>
+</main>
+
+
+<!-- ============ LOAN DETAILS — INACTIVE LOAN (simplified view) ============ -->
+<main class="page" id="appPageInactive">
+  <div class="details-bg">
+    <div class="inactive-wrap">
+
+      <!-- Title section -->
+      <div class="right-col-title">
+        <h1 class="details-h1">Refinance - Rate Reduction</h1>
+        <p class="details-addr">22 Harbor View Rd, Seattle, WA 98101 · <span style="color:#6B7280; font-weight:600;">Withdrawn 18 Jun 2024</span></p>
+      </div>
+
+      <!-- Overview card -->
+      <div class="form-card">
+        <h2 class="nd-title">Overview</h2>
+        <dl class="overview-list">
+          <div class="ov-row"><dt>First Name</dt><dd>John</dd></div>
+          <div class="ov-row"><dt>Last Name</dt><dd>Homeowner</dd></div>
+          <div class="ov-row"><dt>Date of Birth</dt><dd>04/12/1985</dd></div>
+          <div class="ov-row"><dt>Phone</dt><dd>(408) 555-0193</dd></div>
+          <div class="ov-row"><dt>Email</dt><dd>john.homeowner@gmail.com</dd></div>
+          <div class="ov-row"><dt>Subject property address</dt><dd>22 Harbor View Rd, Seattle, WA 98101</dd></div>
+          <div class="ov-row"><dt>Loan Amount</dt><dd>$320,000</dd></div>
+          <div class="ov-row"><dt>Property Value</dt><dd>$485,000</dd></div>
+          <div class="ov-row"><dt>Property Type</dt><dd>Single Family Residence</dd></div>
+          <div class="ov-row"><dt>Loan Type</dt><dd>Conventional</dd></div>
+          <div class="ov-row"><dt>Loan Term</dt><dd>30-Yr Fixed</dd></div>
+          <div class="ov-row"><dt>Loan purpose</dt><dd>Refinance - Rate Reduction</dd></div>
+          <div class="ov-row"><dt>Occupancy</dt><dd>Owner Occupied</dd></div>
+          <div class="ov-row"><dt>Loan number</dt><dd>35368103445</dd></div>
+        </dl>
+      </div>
+
+      <!-- Your loan officer card -->
+      <div class="side-card lo-side inactive-lo">
+        <div class="sc-head">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Your loan officer
+        </div>
+        <div class="lo-contact">
+          <div class="lo-mini">
+            <div class="lo-av">SM</div>
+            <div>
+              <p class="lo-mini-name">Sarah Miller</p>
+              <p class="lo-mini-meta">NMLS #1234567</p>
+            </div>
+          </div>
+          <div class="lo-info">
+            <a href="mailto:sarah.miller@loanfactory.com" class="lo-text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              sarah.miller@loanfactory.com
+            </a>
+            <a href="tel:+14085551234" class="lo-text">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              (408) 555-1234
+            </a>
+          </div>
+        </div>
+        <button type="button" class="lo-more-toggle">More contacts</button>
+      </div>
+
     </div>
   </div>
 </main>
@@ -2355,14 +2689,14 @@
         </div>
       </div>
 
-      <!-- To-Dos tile -->
-      <div class="v2-tile clickable" onclick="openModal('todoModal')">
+      <!-- Disclosures tile -->
+      <div class="v2-tile clickable" onclick="openModal('disclosuresModal')">
         <div class="tile-icon red">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
         </div>
         <div>
-          <p class="tile-label">Outstanding to-dos</p>
-          <p class="tile-value">3 items waiting</p>
+          <p class="tile-label">Disclosures</p>
+          <p class="tile-value">View and sign</p>
         </div>
       </div>
     </div>
@@ -2541,6 +2875,57 @@
   </div>
 </main>
 
+<!-- ============ DISCLOSURES MODAL ============ -->
+<div class="modal-backdrop" id="disclosuresModal" onclick="if(event.target===this) closeModal('disclosuresModal')">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 class="modal-title">Disclosures</h3>
+      <button class="modal-close" onclick="closeModal('disclosuresModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-banner red">
+        <div class="info-banner-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        </div>
+        <div>
+          <p class="info-banner-title">Couldn't load disclosures</p>
+          <p class="info-banner-text">Disclosures will appear here after your rate is locked. Please contact your loan officer once you're ready to lock your rate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ RATE LOCKED MODAL ============ -->
+<div class="modal-backdrop" id="rateLockedModal" onclick="if(event.target===this) closeModal('rateLockedModal')">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 class="modal-title">Rate Locked</h3>
+      <button class="modal-close" onclick="closeModal('rateLockedModal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-banner green">
+        <div class="info-banner-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div>
+          <p class="info-banner-title">Your rate is locked</p>
+          <p class="info-banner-text">Your interest rate is guaranteed until the expiration date below. No action needed.</p>
+        </div>
+      </div>
+
+      <table class="ra-modal-table" style="margin-top:18px;">
+        <tr><th>Locked rate</th><td>5.625%</td></tr>
+        <tr><th>Lock date</th><td>02 Sep 2024</td></tr>
+        <tr><th>Lock expiration</th><td>02 Oct 2024 <span style="color:var(--muted); font-weight:600;">· 30 days remaining</span></td></tr>
+        <tr><th>Loan amount</th><td>$230,000</td></tr>
+        <tr><th>Loan term</th><td>25-Yr Fixed</td></tr>
+        <tr><th>Loan type</th><td>Conventional</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
 <!-- ============ TO-DO MODAL ============ -->
 <div class="modal-backdrop" id="todoModal" onclick="if(event.target===this) closeModal('todoModal')">
   <div class="modal">
@@ -2712,6 +3097,30 @@
   }
   function selectSubV2(subId) { selectStepV2(subId); }
 
+  // Loan picker dropdown (Option A)
+  function toggleLoanPick(e) {
+    e.stopPropagation();
+    document.getElementById('loanPickMenu').classList.toggle('open');
+  }
+  function pickLoan(id) {
+    selectLoan(id);   // swap card content
+    // Update trigger label — "Loan #X of N"
+    const indexMap = { loan1: 1, loan2: 2 };
+    const total = document.querySelectorAll('.lp-item').length;
+    document.getElementById('loanPickLabel').textContent = 'Loan #' + (indexMap[id] || 1) + ' of ' + total;
+    // Update only the selected highlight (keep each loan's status pill as-is)
+    document.querySelectorAll('.lp-item').forEach(o => {
+      o.classList.toggle('selected', o.dataset.loan === id);
+    });
+    document.getElementById('loanPickMenu').classList.remove('open');
+  }
+  // Close picker when clicking outside
+  document.addEventListener('click', (e) => {
+    const menu = document.getElementById('loanPickMenu');
+    const wrap = document.getElementById('loanPickWrap');
+    if (menu && wrap && !wrap.contains(e.target)) menu.classList.remove('open');
+  });
+
   function selectLoan(id) {
     document.querySelectorAll('.loan-block').forEach(b => b.style.display = (b.id === id) ? 'block' : 'none');
     document.querySelectorAll('.ls-pill').forEach(p => p.classList.toggle('active', p.dataset.loan === id));
@@ -2732,7 +3141,7 @@
     if (which === 'active') {
       label.textContent = 'Active loan (2)';
     } else {
-      label.textContent = 'Inactive loan (0)';
+      label.textContent = 'Inactive loan (1)';
     }
     document.getElementById('loanFilterMenu').classList.remove('open');
   }
